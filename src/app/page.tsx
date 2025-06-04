@@ -1,103 +1,198 @@
-import Image from "next/image";
+"use client";
+
+import { useWebSocket } from "@/hook/useWebSocket";
+import { formatTimestamp } from "@/lib/util";
+import { useEffect, useState, useMemo } from "react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+type Lectura = {
+  sensor_id: string;
+  lectura: string | number;
+  mensaje?: string;
+  timestamp_id: string;
+};
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+  const { data } = useWebSocket(
+    "wss://gk7f2pine0.execute-api.us-east-1.amazonaws.com/dev/"
   );
+  const [lecturas, setLecturas] = useState<Lectura[]>([]);
+
+  useEffect(() => {
+    async function fetchLecturas() {
+      try {
+        const res = await fetch(
+          "https://66g81vr8rh.execute-api.us-east-1.amazonaws.com/dev/sensor?sensorId=TU_SENSOR_ID"
+        );
+        if (!res.ok) throw new Error("Error fetching sensor data");
+        const json = await res.json();
+        setLecturas(json);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    }
+    fetchLecturas();
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setLecturas((prev) => [...prev, data]);
+    }
+  }, [data]);
+
+  const alertCountByDay = useMemo(() => {
+    const alerts = lecturas.filter(
+      (l) => l.mensaje && l.mensaje.trim() !== ""
+    );
+    const counts: Record<string, number> = {};
+    alerts.forEach(({ timestamp_id }) => {
+      const date = timestamp_id.split("T")[0];
+      counts[date] = (counts[date] || 0) + 1;
+    });
+    return Object.entries(counts)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }, [lecturas]);
+
+  const ultimaAlerta = useMemo(() => {
+    return lecturas
+      .filter((l) => l.mensaje && l.mensaje.trim() !== "")
+      .sort((a, b) => b.timestamp_id.localeCompare(a.timestamp_id))[0];
+  }, [lecturas]);
+
+  const ultimasAlertas = useMemo(() => {
+    return lecturas
+      .filter((l) => l.mensaje && l.mensaje.trim() !== "")
+      .sort((a, b) => b.timestamp_id.localeCompare(a.timestamp_id))
+      .slice(0, 5);
+  }, [lecturas]);
+
+return (
+  <div className="p-4 max-w-6xl mx-auto font-sans text-sm">
+    <h1 className="text-2xl font-semibold mb-6 text-center">
+      Alertas del sensor
+    </h1>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Columna Izquierda */}
+      <div className="flex flex-col gap-6">
+        {/* Último valor destacado */}
+        <section className="bg-white shadow-md rounded-lg p-6 text-center border">
+          <h2 className="text-base font-semibold mb-4 text-gray-700">
+            Último Valor Registrado
+          </h2>
+          {ultimaAlerta ? (
+            <>
+              <div className="w-40 h-40 mx-auto mb-4 flex items-center justify-center rounded-full border-8 border-red-400 text-4xl font-bold text-red-600">
+                {ultimaAlerta.lectura}
+              </div>
+              <p>
+                <strong>Sensor ID:</strong> {ultimaAlerta.sensor_id}
+              </p>
+              <p>
+                <strong>Mensaje:</strong> {ultimaAlerta.mensaje}
+              </p>
+              <p>
+                <strong>Tiempo:</strong> {formatTimestamp(ultimaAlerta.timestamp_id)}
+              </p>
+            </>
+          ) : (
+            <p className="italic text-gray-500">No hay alerta reciente.</p>
+          )}
+        </section>
+
+        {/* Gráfica de alertas por día */}
+        <section>
+          <h2 className="font-semibold mb-2 text-base">Conteo de alertas por día</h2>
+          {alertCountByDay.length === 0 ? (
+            <p className="italic text-gray-500">No hay alertas para mostrar.</p>
+          ) : (
+            <div style={{ width: "100%", height: 220 }}>
+              <ResponsiveContainer>
+                <BarChart
+                  data={alertCountByDay}
+                  margin={{ top: 10, right: 15, left: 10, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10 }} />
+                  <YAxis allowDecimals={false} tick={{ fontSize: 10 }} />
+                  <Tooltip wrapperStyle={{ fontSize: "12px" }} />
+                  <Bar dataKey="count" fill="#f59e0b" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </section>
+      </div>
+
+      {/* Columna Derecha */}
+      <div className="flex flex-col gap-6">
+        {/* Últimas alertas */}
+        <section className="overflow-y-auto max-h-64">
+          <h2 className="font-semibold mb-2 text-base">Últimas 5 alertas</h2>
+          {ultimasAlertas.length === 0 ? (
+            <p className="italic text-gray-500 text-xs">
+              No hay alertas para mostrar.
+            </p>
+          ) : (
+            <ul className="space-y-2 text-xs">
+              {ultimasAlertas.map((item, idx) => (
+                <li
+                  key={idx}
+                  className="p-2 rounded bg-yellow-100 border border-yellow-300"
+                >
+                  <p>
+                    <strong>Sensor ID:</strong> {item.sensor_id}
+                  </p>
+                  <p>
+                    <strong>Lectura:</strong> {item.lectura}
+                  </p>
+                  <p>
+                    <strong>Mensaje:</strong> {item.mensaje}
+                  </p>
+                  <p>
+                    <strong>Tiempo:</strong> {formatTimestamp(item.timestamp_id)}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* Gráfica adicional: evolución de lecturas */}
+        <section>
+          <h2 className="font-semibold mb-2 text-base">
+            Evolución reciente de lecturas
+          </h2>
+          <div style={{ width: "100%", height: 220 }}>
+            <ResponsiveContainer>
+              <BarChart
+                data={lecturas.slice(-10).map((l) => ({
+                  timestamp: formatTimestamp(l.timestamp_id),
+                  lectura: Number(l.lectura),
+                }))}
+                margin={{ top: 10, right: 15, left: 10, bottom: 5 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="timestamp" tick={{ fontSize: 10 }} />
+                <YAxis />
+                <Tooltip wrapperStyle={{ fontSize: "12px" }} />
+                <Bar dataKey="lectura" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+);
+
 }
