@@ -44,3 +44,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # Dashboard version 2
 
 ![alt text](dashboard1.png)
+
+
+# Dashboard version 3
+
+![alt text](dashboard2.png)
