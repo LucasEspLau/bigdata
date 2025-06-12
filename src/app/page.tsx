@@ -58,7 +58,7 @@ export default function Home() {
   // Lecturas filtradas
   const filteredLecturas = useMemo(() => {
     return lecturas.filter((l) => {
-      const fecha = l.timestamp_id.split("T")[0];
+      const fecha = l.timestamp_id?.split("T")[0];
       if (dateFrom && fecha < dateFrom) return false;
       if (dateTo && fecha > dateTo) return false;
       const val = Number(l.lectura);
