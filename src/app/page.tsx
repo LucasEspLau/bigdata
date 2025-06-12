@@ -196,10 +196,12 @@ export default function Home() {
     children: ReactNode;
   }) => (
     <div className="relative bg-[#F7FFFF] rounded-[24px] shadow-md border border-gray-200 p-6">
-      <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#2C92D5] text-white uppercase text-lg font-semibold py-1 px-3 rounded-full">
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 
+                bg-[#2C92D5] text-white uppercase text-lg font-semibold 
+                py-1 px-3 rounded-full whitespace-nowrap max-w-[90%] overflow-hidden text-ellipsis text-center">
         {title}
       </div>
-      <div className="mt-6 flex items-center">{children}</div>
+      <div className="mt-16 flex items-center">{children}</div>
     </div>
   );
 
@@ -211,10 +213,13 @@ export default function Home() {
     children: ReactNode;
   }) => (
     <div className="relative bg-[#F7FFFF] rounded-[24px] shadow-md border border-gray-200 p-6">
-      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#2C92D5] text-white uppercase text-lg font-semibold py-1 px-3 rounded-full">
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 
+                bg-[#2C92D5] text-white uppercase text-lg font-semibold 
+                py-1 px-3 rounded-full whitespace-nowrap max-w-[90%] overflow-hidden text-ellipsis text-center">
         {title}
       </div>
-      <div className="mt-6">{children}</div>
+
+      <div className="mt-16 flex items-center">{children}</div>
     </div>
   );
 
@@ -448,8 +453,8 @@ export default function Home() {
           </div>
         </InfoCard>
 
-        
-       
+
+
 
         {/* ÚLTIMAS 5 LECTURAS */}
         <InfoCard title="Últimas 5 lecturas">
@@ -475,7 +480,7 @@ export default function Home() {
           </div>
         </InfoCard>
 
-         <InfoCard title="Total de alertas">
+        <InfoCard title="Total de alertas">
           <div className="flex-1 flex justify-center items-center space-x-4 mt-12">
             <img
               src="/images/alerta2.png"
