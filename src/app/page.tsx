@@ -195,8 +195,8 @@ export default function Home() {
     title: string;
     children: ReactNode;
   }) => (
-    <div className="relative bg-white rounded-[24px] shadow-md border border-gray-200 p-6">
-      <div className="absolute -top-3 left-6 bg-[#688AF7] text-white uppercase text-xs font-semibold py-1 px-3 rounded-full">
+    <div className="relative bg-[#F7FFFF] rounded-[24px] shadow-md border border-gray-200 p-6">
+      <div className="absolute top-2 left-1/2 -translate-x-1/2 bg-[#2C92D5] text-white uppercase text-lg font-semibold py-1 px-3 rounded-full">
         {title}
       </div>
       <div className="mt-6 flex items-center">{children}</div>
@@ -210,8 +210,8 @@ export default function Home() {
     title: string;
     children: ReactNode;
   }) => (
-    <div className="relative bg-white rounded-[24px] shadow-md border border-gray-200 p-6">
-      <div className="absolute -top-3 left-6 bg-[#688AF7] text-white uppercase text-xs font-semibold py-1 px-3 rounded-full">
+    <div className="relative bg-[#F7FFFF] rounded-[24px] shadow-md border border-gray-200 p-6">
+      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-[#2C92D5] text-white uppercase text-lg font-semibold py-1 px-3 rounded-full">
         {title}
       </div>
       <div className="mt-6">{children}</div>
@@ -219,7 +219,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-[#C2EAFA] p-8">
+    <div className="min-h-screen bg-[#b7e3ee] p-8">
 
       <h1 className="
   text-center 
@@ -227,13 +227,12 @@ export default function Home() {
   font-extrabold            /* Negrita extra */
   uppercase                 /* Todo en mayúsculas */
   tracking-wider            /* Espaciado entre letras */
-  text-[#7A82EC]            /* Color lila */
+  text-[#5e8ad2]            /* Color lila */
   mb-8 
   drop-shadow-lg            /* Sombra suave al texto */
-  max-w-4xl mx-auto         /* Límite de ancho y centrado */
+       /* Límite de ancho y centrado */
 ">
-        Dashboard Alertas de
-        <span className="block text-[#5F7CED]">Calidad del Aire</span>
+        Dashboard Alertas de Calidad del Aire
       </h1>
 
       {/* Controles de filtro */}
@@ -245,9 +244,10 @@ export default function Home() {
       text-left 
       text-2xl md:text-1xl 
       font-extrabold 
+    
       uppercase 
       tracking-wider 
-      text-[#7A82EC]
+      text-[#2C92D5]
       drop-shadow
       mb-2
     ">
@@ -263,6 +263,7 @@ export default function Home() {
         border border-[#4F46E5] 
         rounded-lg 
         shadow-sm 
+        bg-[white]
         focus:outline-none focus:ring-2 focus:ring-[#5F7CED] focus:border-transparent 
         transition
       "
@@ -277,7 +278,7 @@ export default function Home() {
       font-extrabold 
       uppercase 
       tracking-wider 
-      text-[#4F46E5]
+      text-[#2C92D5]
       drop-shadow
       mb-2
     ">
@@ -293,6 +294,7 @@ export default function Home() {
         border border-[#688AF7] 
         rounded-lg 
         shadow-sm 
+        bg-[white]
         focus:outline-none focus:ring-2 focus:ring-[#5F7CED] focus:border-transparent 
         transition
       "
@@ -307,7 +309,7 @@ export default function Home() {
       font-extrabold 
       uppercase 
       tracking-wider 
-      text-[#4F46E5]
+      text-[#2C92D5]
       drop-shadow
       mb-2
     ">
@@ -322,6 +324,7 @@ export default function Home() {
         border border-[#688AF7] 
         rounded-lg 
         shadow-sm 
+        bg-[white]
         focus:outline-none focus:ring-2 focus:ring-[#5F7CED] focus:border-transparent 
         transition
       "
@@ -381,13 +384,13 @@ export default function Home() {
             onClick={exportCSV}
             className="
     w-full 
-    bg-gradient-to-r from-[#5F7CED] to-[#7A82EC] 
+    bg-gradient-to-r from-[#2C92D5] to-[#7A82EC] 
     text-white 
     font-semibold 
     py-2 
     rounded-2xl 
     shadow-lg 
-    hover:from-[#688AF7] hover:to-[#5F7CED] 
+    hover:from-[#688AF7] hover:to-[#2C92D5] 
     transition-colors duration-300
     flex items-center justify-center space-x-2
   "
@@ -415,20 +418,6 @@ export default function Home() {
 
       {/* Primera fila */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <InfoCard title="Total de alertas">
-          <div className="flex-1 flex justify-center items-center space-x-4 mt-12">
-            <img
-              src="/images/alerta2.png"
-              alt="Alerta"
-              className="w-30 h-30"
-            />
-            <span className="text-8xl font-bold text-[#1E3A8A]">
-              {totalAlerts}
-            </span>
-          </div>
-        </InfoCard>
-
-
 
         <InfoCard title="Última lectura">
           {/* Único hijo de InfoCard: este div */}
@@ -438,9 +427,9 @@ export default function Home() {
               <img
                 src="/images/alerta.png"
                 alt="Alerta"
-                className="w-30 h-30"
+                className="w-40 h-30"
               />
-              <span className="text-8xl font-bold text-[#EF4444]">
+              <span className="text-8xl font-bold text-[#FF3131]">
                 {ultimaAlerta?.lectura ?? "-"}
               </span>
             </div>
@@ -459,7 +448,8 @@ export default function Home() {
           </div>
         </InfoCard>
 
-
+        
+       
 
         {/* ÚLTIMAS 5 LECTURAS */}
         <InfoCard title="Últimas 5 lecturas">
@@ -485,6 +475,19 @@ export default function Home() {
           </div>
         </InfoCard>
 
+         <InfoCard title="Total de alertas">
+          <div className="flex-1 flex justify-center items-center space-x-4 mt-12">
+            <img
+              src="/images/alerta2.png"
+              alt="Alerta"
+              className="w-40 h-30"
+            />
+            <span className="text-8xl font-bold text-[#13538a]">
+              {totalAlerts}
+            </span>
+          </div>
+        </InfoCard>
+
 
 
 
@@ -505,7 +508,7 @@ export default function Home() {
                     position: "insideBottom",
                     offset: -5,
                     fill: "#1E3A8A",
-                    fontSize: 12,
+                    fontSize: 14,
                   }}
                 />
                 <YAxis
@@ -514,9 +517,9 @@ export default function Home() {
                     value: "Valor de la lectura",
                     angle: -90,
                     position: "insideLeft",
-                    dy: 40,            // <— baja el texto un poco
+                    dy: 45,            // <— baja el texto un poco
                     fill: "#1E3A8A",
-                    fontSize: 12,
+                    fontSize: 14,
                   }}
                 />
                 <Tooltip />
@@ -573,7 +576,7 @@ export default function Home() {
                     position: "insideBottom",
                     offset: -5,
                     fill: "#1E3A8A",
-                    fontSize: 12,
+                    fontSize: 14,
                   }}
                 />
                 <YAxis
@@ -583,9 +586,9 @@ export default function Home() {
                     value: "Cantidad de alertas",
                     angle: -90,
                     position: "insideLeft",
-                    dy: 20,            // ajusta si es necesario
+                    dy: 40,            // ajusta si es necesario
                     fill: "#1E3A8A",
-                    fontSize: 12,
+                    fontSize: 14,
                   }}
                 />
                 <Tooltip />
