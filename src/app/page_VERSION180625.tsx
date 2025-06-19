@@ -48,7 +48,7 @@ export default function Home() {
   // Filtros
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [level, setLevel] = useState<"all" | "low" | "medium" | "high" | "critical">("all");
+const [level, setLevel] = useState<"all" | "low" | "medium" | "high" | "critical">("all");
   const [searchText, setSearchText] = useState("");
   // Fetch inicial
   useEffect(() => {
@@ -106,28 +106,28 @@ export default function Home() {
   const totalAlerts = filteredLecturas.filter((l) => l.mensaje && l.mensaje.trim())
     .length;
 
-  const alertCountByDay = useMemo(() => {
-    const grouped: Record<string, { Leve: number; Moderado: number; Alto: number; Crítico: number }> = {};
+const alertCountByDay = useMemo(() => {
+  const grouped: Record<string, { Leve: number; Moderado: number; Alto: number; Crítico: number }> = {};
 
-    filteredLecturas
-      .filter((l) => l.mensaje && l.mensaje.trim())
-      .forEach(({ timestamp_id, lectura }) => {
-        const day = timestamp_id.split("T")[0];
-        const nivel = getNivel(Number(lectura));
-        if (!grouped[day]) {
-          grouped[day] = { Leve: 0, Moderado: 0, Alto: 0, Crítico: 0 };
-        }
-        grouped[day][nivel]++;
-      });
+  filteredLecturas
+    .filter((l) => l.mensaje && l.mensaje.trim())
+    .forEach(({ timestamp_id, lectura }) => {
+      const day = timestamp_id.split("T")[0];
+      const nivel = getNivel(Number(lectura));
+      if (!grouped[day]) {
+        grouped[day] = { Leve: 0, Moderado: 0, Alto: 0, Crítico: 0 };
+      }
+      grouped[day][nivel]++;
+    });
 
-    return Object.entries(grouped)
-      .map(([date, counts]) => ({
-        date,
-        ...counts,
-      }))
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .slice(-5);
-  }, [filteredLecturas]);
+  return Object.entries(grouped)
+    .map(([date, counts]) => ({
+      date,
+      ...counts,
+    }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+    .slice(-5);
+}, [filteredLecturas]);
 
 
   const ultimaAlerta = useMemo(
@@ -156,29 +156,29 @@ export default function Home() {
   const normales = filteredLecturas.length - totalAlerts;
   const alertas = totalAlerts;
 
-  const lecturasUltimas = useMemo(() => {
-    return [...filteredLecturas]
-      .sort((a, b) => a.timestamp_id.localeCompare(b.timestamp_id))
-      .slice(-20)
-      .map((l) => ({
-        hora: formatTimestamp(l.timestamp_id).split(" ")[1],
-        valor: Number(l.lectura),
-        nivel: getNivel(Number(l.lectura)), // 👈 importante
-      }));
-  }, [filteredLecturas]);
+const lecturasUltimas = useMemo(() => {
+  return [...filteredLecturas]
+    .sort((a, b) => a.timestamp_id.localeCompare(b.timestamp_id))
+    .slice(-20)
+    .map((l) => ({
+      hora: formatTimestamp(l.timestamp_id).split(" ")[1],
+      valor: Number(l.lectura),
+      nivel: getNivel(Number(l.lectura)), // 👈 importante
+    }));
+}, [filteredLecturas]);
 
 
-  const lecturas5h = useMemo(() => {
-    const cincoHorasAntes = new Date(Date.now() - 5 * 60 * 60 * 1000);
+const lecturas5h = useMemo(() => {
+  const cincoHorasAntes = new Date(Date.now() - 5 * 60 * 60 * 1000);
 
-    return filteredLecturas
-      .filter((l) => new Date(l.timestamp_id) >= cincoHorasAntes)
-      .sort((a, b) => a.timestamp_id.localeCompare(b.timestamp_id))
-      .map((l) => ({
-        hora: formatTimestamp(l.timestamp_id).split(" ")[1],
-        valor: Number(l.lectura),
-      }));
-  }, [filteredLecturas]);
+  return filteredLecturas
+    .filter((l) => new Date(l.timestamp_id) >= cincoHorasAntes)
+    .sort((a, b) => a.timestamp_id.localeCompare(b.timestamp_id))
+    .map((l) => ({
+      hora: formatTimestamp(l.timestamp_id).split(" ")[1],
+      valor: Number(l.lectura),
+    }));
+}, [filteredLecturas]);
 
 
   const InfoCard = ({
@@ -203,7 +203,7 @@ export default function Home() {
       >
         {title}
       </div>
-      <div className="mt-17">{children}</div> {/* mt ajustado a la nueva altura */}
+      <div className="mt-20">{children}</div> {/* mt ajustado a la nueva altura */}
     </div>
   );
 
@@ -228,7 +228,7 @@ export default function Home() {
       >
         {title}
       </div>
-      <div className="mt-17">{children}</div>
+      <div className="mt-20">{children}</div>
     </div>
   );
 
@@ -244,23 +244,21 @@ export default function Home() {
             style={{
               WebkitTextStroke: "1px #13538a",    // grosor y color del borde de las letras
               WebkitTextFillColor: "#5e8ad2",     // relleno interior del texto
-              backgroundImage: "linear-gradient(90deg, #5e8ad2, #9cdcf2)",
-              WebkitBackgroundClip: "text",
-
-              transition: "all 0.3s ease-in-out",
             }}
             className="
-                text-center
-                text-5xl md:text-4xl
-                font-extrabold uppercase
-                tracking-widest
-                drop-shadow-lg
-                mb-4
-                hover:scale-105
-    hover:drop-shadow-2xl
-              "  >
+    text-center
+    text-5xl md:text-4xl
+    font-extrabold uppercase
+    tracking-widest
+    drop-shadow-lg
+    mb-4
+  "
+          >
             AIRSENTINEL: PROTEGE TU VIDA Y AMBIENTE
           </h1>
+
+
+
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Desde */}
@@ -271,7 +269,7 @@ export default function Home() {
                 value={dateFrom}
                 onChange={e => setDateFrom(e.target.value)}
                 className="
-                  w-full px-4 py-2 h-12 bg-white 
+                  w-full px-4 py-2 bg-white 
                   border border-[#6c86e6]       /* borde normal */
                   rounded-lg 
                   text-[#6c86e6] font-bold        /* texto del mismo color y en negrita */
@@ -289,7 +287,7 @@ export default function Home() {
                 value={dateTo}
                 onChange={e => setDateTo(e.target.value)}
                 className="
-                  w-full px-4 py-2 h-12 bg-white 
+                  w-full px-4 py-2 bg-white 
                   border border-[#6c86e6]       /* borde normal */
                   rounded-lg 
                   text-[#6c86e6] font-bold        /* texto del mismo color y en negrita */
@@ -299,29 +297,31 @@ export default function Home() {
                 "
               />
 
+
             </div>
             {/* Nivel */}
-            <div className="flex flex-col">
-              <label className="font-extrabold uppercase text-[#6c86e6] mb-1">Nivel:</label>
-              <select
-                value={level}
-                onChange={e => setLevel(e.target.value as any)}
-                className="
-                    w-full px-4 py-2 h-12 bg-white  
-                    border border-[#6c86e6] 
-                    rounded-lg 
-                    text-[#6c86e6] font-bold 
-                    focus:ring-2 focus:ring-[#5e8ad2] 
-                    focus:border-[#5e8ad2] 
-                    transition
-                  " >
-                <option value="all">Todos los niveles</option>
-                <option value="low">Leve (&lt;700)</option>
-                <option value="medium">Moderado (700–799)</option>
-                <option value="high">Alto (800–899)</option>
-                <option value="critical">Crítico (900+)</option>
-              </select>
-            </div>
+<div className="flex flex-col">
+  <label className="font-extrabold uppercase text-[#6c86e6] mb-1">Nivel:</label>
+  <select
+    value={level}
+    onChange={e => setLevel(e.target.value as any)}
+    className="
+      w-full px-4 py-2 bg-white 
+      border border-[#6c86e6] 
+      rounded-lg 
+      text-[#6c86e6] font-bold 
+      focus:ring-2 focus:ring-[#5e8ad2] 
+      focus:border-[#5e8ad2] 
+      transition
+    "
+  >
+    <option value="all">Todos los niveles</option>
+    <option value="low">Leve (&lt;700)</option>
+    <option value="medium">Moderado (700–799)</option>
+    <option value="high">Alto (800–899)</option>
+    <option value="critical">Crítico (900+)</option>
+  </select>
+</div>
 
           </div>
         </div>
@@ -349,38 +349,38 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
             {/* Alertas vs Lectura Normal */}
-            <ChartCard title="Distribución de Niveles de Alerta">
-              <div style={{ width: "100%", height: 350 }}>
-                <ResponsiveContainer>
-                  <PieChart>
-                    <Pie
-                      data={[
-                        { name: "Leve", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Leve").length },
-                        { name: "Moderado", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Moderado").length },
-                        { name: "Alto", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Alto").length },
-                        { name: "Crítico", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Crítico").length },
-                      ]}
-                      innerRadius={80}
-                      outerRadius={120}
-                      paddingAngle={2}
-                      dataKey="value"
-                      label={({ name, percent, x, y }) => (
-                        <text x={x} y={y} fill="#000" fontSize={15} textAnchor="middle">
-                          {`${name} ${Math.round(percent * 100)}%`}
-                        </text>
-                      )}
-                      labelLine={false}
-                    >
-                      <Cell fill="#9cdcf2" />  {/* Leve */}
-                      <Cell fill="#ffe57f" />  {/* Moderado */}
-                      <Cell fill="#ff9f43" />  {/* Alto */}
-                      <Cell fill="#f44336" />  {/* Crítico */}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </ChartCard>
+<ChartCard title="Distribución de Niveles de Alerta">
+  <div style={{ width: "100%", height: 250 }}>
+    <ResponsiveContainer>
+      <PieChart>
+        <Pie
+          data={[
+            { name: "Leve", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Leve").length },
+            { name: "Moderado", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Moderado").length },
+            { name: "Alto", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Alto").length },
+            { name: "Crítico", value: filteredLecturas.filter(l => getNivel(Number(l.lectura)) === "Crítico").length },
+          ]}
+          innerRadius={60}
+          outerRadius={90}
+          paddingAngle={2}
+          dataKey="value"
+          label={({ name, percent, x, y }) => (
+            <text x={x} y={y} fill="#000" fontSize={12} textAnchor="middle">
+              {`${name} ${Math.round(percent * 100)}%`}
+            </text>
+          )}
+          labelLine={false}
+        >
+          <Cell fill="#9cdcf2" />  {/* Leve */}
+          <Cell fill="#ffe57f" />  {/* Moderado */}
+          <Cell fill="#ff9f43" />  {/* Alto */}
+          <Cell fill="#f44336" />  {/* Crítico */}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+</ChartCard>
 
 
 
@@ -388,19 +388,19 @@ export default function Home() {
             <InfoCard title="Última lectura">
               <div
                 className="
-                    flex flex-col md:flex-row 
-                    items-center justify-center         /* << siempre centrado! */
-                    space-y-6 md:space-y-0 md:space-x-12 /* un poco más de separación */
-                    mt-8
-                  "
+      flex flex-col md:flex-row 
+      items-center justify-center         /* << siempre centrado! */
+      space-y-6 md:space-y-0 md:space-x-12 /* un poco más de separación */
+      mt-8
+    "
               >
                 {/* --- Icono dentro de círculo --- */}
                 <div className="flex-shrink-0">
-                  <div className="w-70 h-70 bg-[#7CEAFF] rounded-full flex items-center justify-center">
+                  <div className="w-40 h-40 bg-[#7CEAFF] rounded-full flex items-center justify-center">
                     <img
-                      src="/images/ultima_alerta1.png"
+                      src="/images/ultima_alerta.png"
                       alt="Alerta"
-                      className="w-50 h-50"
+                      className="w-24 h-24"
                     />
                   </div>
                 </div>
@@ -472,36 +472,35 @@ export default function Home() {
             {/* Lecturas (últimas 5 horas) */}
 
             <ChartCard title="Lecturas (últimas 5 horas)">
-              <div style={{ width: "100%", height: 350 }}>
+              <div style={{ width: "100%", height: 300 }}>
                 <ResponsiveContainer>
-                  <LineChart data={lecturasUltimas} margin={{ top: 10, right: 10, left: 10, bottom: 40 }} // <--- clave
-                  >
+                  <LineChart data={lecturasUltimas}>
                     {/* Grid sólo horizontal para no recargar */}
                     <CartesianGrid stroke="#D1E9F8" strokeDasharray="5 5" vertical={false} />
 
                     {/* Eje X */}
                     <XAxis
                       dataKey="hora"
-                      tick={{ fill: "#13538a", fontSize: 14 }}
+                      tick={{ fill: "#13538a", fontSize: 12 }}
                       label={{
                         value: "Hora",
                         position: "insideBottom",
-                        offset: -30,
+                        offset: -5,
                         fill: "#13538a",
-                        fontSize: 18,
+                        fontSize: 14,
                       }}
                     />
 
                     {/* Eje Y */}
                     <YAxis
-                      tick={{ fill: "#13538a", fontSize: 14 }}
+                      tick={{ fill: "#13538a", fontSize: 12 }}
                       label={{
                         value: "Valor de la lectura",
                         angle: -90,
                         position: "insideLeft",
-                        dy: 40,
+                        dy: 45,
                         fill: "#13538a",
-                        fontSize: 18,
+                        fontSize: 14,
                       }}
                     />
 
@@ -522,32 +521,32 @@ export default function Home() {
                     />
 
                     {/* Línea principal */}
-                    <Line
-                      type="monotone"
-                      dataKey="valor"
-                      stroke="#ccc"
-                      strokeWidth={2}
-                      dot={({ cx, cy, payload, index }) => {
-                        const colorByNivel = {
-                          Leve: "#9cdcf2",
-                          Moderado: "#ffe57f",
-                          Alto: "#ff9f43",
-                          Crítico: "#f44336",
-                        };
-                        return (
-                          <circle
-                            key={`${payload.hora}-${index}`} // ✅ clave única por punto
-                            cx={cx}
-                            cy={cy}
-                            r={6}
-                            fill={colorByNivel[payload.nivel as keyof typeof colorByNivel]}
-                            stroke="#13538a"
-                            strokeWidth={1.5}
-                          />
-                        );
-                      }}
-                      activeDot={{ r: 7 }}
-                    />
+  <Line
+  type="monotone"
+  dataKey="valor"
+  stroke="#ccc"
+  strokeWidth={2}
+  dot={({ cx, cy, payload, index }) => {
+    const colorByNivel = {
+      Leve: "#9cdcf2",
+      Moderado: "#ffe57f",
+      Alto: "#ff9f43",
+      Crítico: "#f44336",
+    };
+    return (
+      <circle
+        key={`${payload.hora}-${index}`} // ✅ clave única por punto
+        cx={cx}
+        cy={cy}
+        r={6}
+        fill={colorByNivel[payload.nivel as keyof typeof colorByNivel]}
+        stroke="#13538a"
+        strokeWidth={1.5}
+      />
+    );
+  }}
+  activeDot={{ r: 7 }}
+/>
 
                   </LineChart>
                 </ResponsiveContainer>
@@ -556,53 +555,52 @@ export default function Home() {
 
 
 
-            {/* Cantidad de alertas por tipo (últimos 5 días) */}
-            <ChartCard title="Cantidad de alertas por tipo (últimos 5 días)">
-              <div style={{ width: "100%", height: 350 }}>
-                <ResponsiveContainer>
-                  <BarChart data={alertCountByDay} margin={{ top: 10, right: 10, left: 10, bottom: 40 }} // <--- clave
-                  >
-                    <CartesianGrid stroke="#D1E9F8" strokeDasharray="5 5" />
+            {/* Cantidad de alertas (últimos 5 días) */}
+<ChartCard title="Cantidad de alertas por tipo (últimos 5 días)">
+  <div style={{ width: "100%", height: 300 }}>
+    <ResponsiveContainer>
+      <BarChart data={alertCountByDay}>
+        <CartesianGrid stroke="#D1E9F8" strokeDasharray="5 5" />
 
-                    <XAxis
-                      dataKey="date"
-                      tick={{ fill: "#13538a", fontSize: 14 }}
-                      tickFormatter={(value: string) => {
-                        const [year, month, day] = value.split("-");
-                        return `${day}/${month}/${year}`;
-                      }}
+        <XAxis
+          dataKey="date"
+          tick={{ fill: "#13538a", fontSize: 12 }}
+          tickFormatter={(value: string) => {
+  const [year, month, day] = value.split("-");
+  return `${day}/${month}/${year}`;
+}}
 
-                      label={{
-                        value: "Fecha",
-                        position: "insideBottom",
-                        offset: -30,
-                        fill: "#13538a",
-                        fontSize: 18,
-                      }}
-                    />
+          label={{
+            value: "Fecha",
+            position: "insideBottom",
+            offset: -5,
+            fill: "#13538a",
+            fontSize: 14,
+          }}
+        />
 
-                    <YAxis
-                      allowDecimals={false}
-                      tick={{ fill: "#13538a", fontSize: 14 }}
-                      label={{
-                        value: "Cantidad por tipo",
-                        angle: -90,
-                        position: "insideLeft",
-                        dy: 40,
-                        fill: "#13538a",
-                        fontSize: 18,
-                      }}
-                    />
+        <YAxis
+          allowDecimals={false}
+          tick={{ fill: "#13538a", fontSize: 12 }}
+          label={{
+            value: "Cantidad por tipo",
+            angle: -90,
+            position: "insideLeft",
+            dy: 40,
+            fill: "#13538a",
+            fontSize: 14,
+          }}
+        />
 
-                    <Tooltip />
-                    <Bar dataKey="Leve" stackId="a" fill="#9cdcf2" />
-                    <Bar dataKey="Moderado" stackId="a" fill="#ffe57f" />
-                    <Bar dataKey="Alto" stackId="a" fill="#ff9f43" />
-                    <Bar dataKey="Crítico" stackId="a" fill="#f44336" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </ChartCard>
+        <Tooltip />
+        <Bar dataKey="Leve" stackId="a" fill="#9cdcf2" />
+        <Bar dataKey="Moderado" stackId="a" fill="#ffe57f" />
+        <Bar dataKey="Alto" stackId="a" fill="#ff9f43" />
+        <Bar dataKey="Crítico" stackId="a" fill="#f44336" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</ChartCard>
 
 
           </div>
@@ -612,8 +610,8 @@ export default function Home() {
         <div className="flex-1 overflow-y-auto pl-2 pr-6">*/}
         <div className="md:col-span-1">
           <InfoCard title="Últimas 10 lecturas">
-            <div className="w-full overflow-y-auto max-h-220 pl-2 pr-25">
-              <ul className="space-y-8 text-sm">
+            <div className="w-full overflow-y-auto max-h-250 pl-2 pr-25">
+              <ul className="space-y-2 text-sm">
                 {ultimasAlertas.map((l, i) => (
                   <li key={i}>
                     <p className="text-[#1E3A8A]">
