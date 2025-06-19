@@ -565,13 +565,11 @@ const lecturas5h = useMemo(() => {
         <XAxis
           dataKey="date"
           tick={{ fill: "#13538a", fontSize: 12 }}
-          tickFormatter={(value) =>
-            new Date(value).toLocaleDateString("es-PE", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })
-          }
+          tickFormatter={(value: string) => {
+  const [year, month, day] = value.split("-");
+  return `${day}/${month}/${year}`;
+}}
+
           label={{
             value: "Fecha",
             position: "insideBottom",
