@@ -58,3 +58,73 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 # Dashboard version MEJORADA 190625
 
 ![alt text](image.png)
+
+# CODIGO MICROCONTROLADOR
+
+#include <ESP8266WiFi.h>
+#include <WiFiClientSecure.h>
+#include <ESP8266HTTPClient.h>
+
+// Parámetros de la red WiFi
+const char* ssid = "Redmi12C";
+const char* password = "12042003";
+
+// URL del API Gateway HTTPS
+const char* api_url = "https://66g81vr8rh.execute-api.us-east-1.amazonaws.com/dev/sensor";
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  int intentos = 0;
+  while (WiFi.status() != WL_CONNECTED && intentos < 20) {
+    delay(500);
+    Serial.print(".");
+    intentos++;
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("\nConectado al WiFi");
+  } else {
+    Serial.println("\nNo se pudo conectar al WiFi. Reiniciando...");
+    ESP.restart();
+  }
+}
+
+void loop() {
+  if (WiFi.status() == WL_CONNECTED) {
+    int lectura = analogRead(A0);
+
+    WiFiClientSecure client;
+    client.setInsecure();  // ⚠️ Solo para pruebas
+
+    HTTPClient https;
+    String payload = "{\"sensor_id\":\"MQ135-1\",\"lectura\":" + String(lectura) + "}";
+
+    Serial.print("Enviando: ");
+    Serial.println(payload);
+
+    if (https.begin(client, api_url)) {
+      https.addHeader("Content-Type", "application/json");
+      https.addHeader("Accept", "*/*");
+      https.addHeader("Connection", "close");
+      https.addHeader("User-Agent", "ESP8266");
+
+      int httpCode = https.POST(payload);
+
+      Serial.print("Código de respuesta: ");
+      Serial.println(httpCode);
+      Serial.print("Respuesta del servidor: ");
+      Serial.println(https.getString());
+
+      https.end();
+    } else {
+      Serial.println("❌ Error iniciando la conexión HTTPS");
+    }
+  } else {
+    Serial.println("WiFi desconectado. Reintentando...");
+    WiFi.begin(ssid, password);
+  }
+
+  delay(2000);  // Esperar 2 segundos antes del próximo envío
+}
